@@ -49,6 +49,10 @@ class DrawAppLayout(BoxLayout):
         for child in self.sm.screens:
             child.change_tool_size(size)
 
+    def change_tool(self, tool):
+        for child in self.sm.screens:
+            child.change_tool(tool)
+
 class Canvas1(Canvas):
     pass
 
