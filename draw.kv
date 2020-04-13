@@ -1,0 +1,86 @@
+<DrawAppLayout>:
+    orientation: 'vertical'
+    sm: sm
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        pos_hint: {'top': 1}
+        height: 30
+
+        Button:
+            text: 'Change Color'
+            on_release: root.open_color_picker()
+
+        #Pen Size Slider
+        BoxLayout:
+            Label:
+                text: 'Size:'
+                size_hint: 0.3, 1
+                halign: 'right'
+            Slider:
+                id: slider
+                min: 1
+                max: 30
+                step: 1
+                value: 5
+                on_touch_up:
+                    root.change_tool_size(self.value)
+            Label:
+                text: str(slider.value)
+                size_hint: 0.1, 1
+                halign: 'left'
+
+        Button:
+            text: 'Clear'
+            size_hint: 0.4, 1
+            on_release: root.clear_canvas()
+
+        Button:
+            size_hint: 0.1, 1
+            on_release: root.prev_canvas()
+            Image:
+                source: 'Left.png'
+                size: self.parent.size
+                pos: self.parent.pos
+                allow_stretch: True
+
+        Button:
+            size_hint: 0.1, 1
+            on_release: root.next_canvas()
+            Image:
+                source: 'Right.png'
+                size: self.parent.size
+                pos: self.parent.pos
+                allow_stretch: True
+
+    ScreenManager:
+        id: sm
+        Canvas1:
+        Canvas2:
+        Canvas3:
+    
+
+<Canvas1>:
+    name: '1'
+
+<Canvas2>:
+    name: '2'
+
+<Canvas3>:
+    name: '3'
+
+<ColorPickerDialog>:
+    BoxLayout:
+        orientation: 'vertical'
+        size: root.size
+        pos: root.pos
+
+        ColorPicker:
+            id: color_picker
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: 'Done'
+                on_release: root.change_color(color_picker.color)
