@@ -30,6 +30,9 @@ class Canvas(Screen):
                 touch.ud['line'] = Line(points=(touch.x, touch.y), width=(self.tool_size / 2))
                 self.line_start = [touch.x, touch.y]
 
+        if self.current_tool == 'Square tool':
+            self.line_start = [touch.x, touch.y]
+
     def on_touch_move(self, touch):
         if self.current_tool == 'Pen tool':
             try:
@@ -44,30 +47,47 @@ class Canvas(Screen):
                 pass
 
         if self.current_tool == 'Line tool':
-            try:
-                if len(self.lines) > 1:
-                    item = self.lines.pop(0)
-                    self.canvas.remove(item)
+            points = [self.line_start[0], self.line_start[1], touch.x, touch.y]
+            self.draw_line_preview(points, False)
 
-                line = InstructionGroup()
-                line.add(Color(self.tool_color[0], self.tool_color[1], self.tool_color[2], self.tool_color[3]))
-                line.add(Line(points=(self.line_start[0], self.line_start[1], touch.x, touch.y), width=(self.tool_size / 2)))
-                self.lines.append(line)
-                self.canvas.add(line)
-            except:
-                pass
+        if self.current_tool == 'Square tool':
+            points = [self.line_start[0], self.line_start[1], touch.x, self.line_start[1], touch.x, touch.y, self.line_start[0], touch.y]
+            self.draw_line_preview(points, True)
 
     def on_touch_up(self, touch):
         if self.current_tool == 'Line tool':
             try:
                 touch.ud['line'].points += [touch.x, touch.y]
-
-                if len(self.lines) > 0:
-                    for line in self.lines:
-                        self.canvas.remove(line)
-                        self.lines.remove(line)
+                self.clear_preview_lines()                
             except:
                 pass
+
+        if self.current_tool == 'Square tool':
+            with self.canvas:
+                Color(self.tool_color[0], self.tool_color[1], self.tool_color[2], self.tool_color[3])
+                points = self.lines[-1].children[-1].points # Get all 4 points from the last square preview
+                Line(points=(points), width=(self.tool_size / 2), close=True)
+            self.clear_preview_lines()
+
+    def draw_line_preview(self, points, close):
+        try:
+            if len(self.lines) > 1:
+                item = self.lines.pop(0)
+                self.canvas.remove(item)
+
+            line = InstructionGroup()
+            line.add(Color(self.tool_color[0], self.tool_color[1], self.tool_color[2], self.tool_color[3]))
+            line.add(Line(points=(points), width=(self.tool_size / 2), close=close))
+            self.lines.append(line)
+            self.canvas.add(line)
+        except:
+            pass
+
+    def clear_preview_lines(self):
+        if len(self.lines) > 0:
+            for line in self.lines:
+                self.canvas.remove(line)
+                self.lines.remove(line)
 
     def change_tool_color(self, color):
         self.tool_color = color
