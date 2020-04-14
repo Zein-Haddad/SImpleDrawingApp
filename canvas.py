@@ -63,11 +63,14 @@ class Canvas(Screen):
                 pass
 
         if self.current_tool == 'Square tool':
-            with self.canvas:
-                Color(self.tool_color[0], self.tool_color[1], self.tool_color[2], self.tool_color[3])
-                points = self.lines[-1].children[-1].points # Get all 4 points from the last square preview
-                Line(points=(points), width=(self.tool_size / 2), close=True)
-            self.clear_preview_lines()
+            try:
+                with self.canvas:
+                    Color(self.tool_color[0], self.tool_color[1], self.tool_color[2], self.tool_color[3])
+                    points = self.lines[-1].children[-1].points # Get all 4 points from the last square preview
+                    Line(points=(points), width=(self.tool_size / 2), close=True)
+                self.clear_preview_lines()
+            except:
+                pass
 
     def draw_line_preview(self, points, close):
         try:
